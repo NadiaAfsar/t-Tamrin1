@@ -18,7 +18,7 @@ public class Physics extends Faculty{
     private void addPhysic1() {
         Time start = new Time(10,0);
         Time end = new Time(12, 0);
-        Time t = new Time(new String[]{"Saturday", "Monday"}, start, end);
+        Time t = new Time(new int[]{1, 3}, start, end);
         Time exam = new Time("1 Tir", new Time(9, 0));
         Course course = new Physic1("Baghram", t, exam, 150);
         this.getCourses().add(course);
@@ -27,7 +27,7 @@ public class Physics extends Faculty{
     private void addPhysic1Lab() {
         Time start = new Time(8,0);
         Time end = new Time(10, 0);
-        Time t = new Time(new String[]{"Saturday"}, start, end);
+        Time t = new Time(new int[]{1}, start, end);
         Time exam = new Time("10 Khordad", new Time(9, 0));
         Course course = new Physic1Lab("Moghimi", t, exam, 150);
         this.getCourses().add(course);
@@ -36,7 +36,7 @@ public class Physics extends Faculty{
     private void addElectromagnetism() {
         Time start = new Time(13,0);
         Time end = new Time(15, 0);
-        Time t = new Time(new String[]{"Sunday", "Tuesday"}, start, end);
+        Time t = new Time(new int[]{2, 4}, start, end);
         Time exam = new Time("20 Khordad", new Time(9, 0));
         Course course = new Physic1Lab("Mirkamali", t, exam, 150);
         this.getCourses().add(course);

@@ -1,6 +1,7 @@
 package Model.Faculty;
 
 import Model.Courses.Course;
+import Model.Student;
 
 import java.util.ArrayList;
 
@@ -19,4 +20,6 @@ public abstract class Faculty {
     public void setCourses(ArrayList<Course> courses) {
         this.courses = courses;
     }
+
+
 }

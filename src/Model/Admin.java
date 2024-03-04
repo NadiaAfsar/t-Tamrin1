@@ -6,3 +6,4 @@ public class Admin extends User{
         this.setPassword("admin");
     }
 }
+

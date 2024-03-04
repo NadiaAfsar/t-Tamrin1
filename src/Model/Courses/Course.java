@@ -1,6 +1,9 @@
 package Model.Courses;
 
+import Model.Student;
 import Model.Time;
+
+import java.util.ArrayList;
 
 public abstract class Course {
     private String title;
@@ -10,6 +13,8 @@ public abstract class Course {
     private int credit;
     private int code;
     private int capacity;
+    private int taken;
+    private ArrayList<Student> students;
 
 
     public void setCapacity(int capacity) {
@@ -66,5 +71,26 @@ public abstract class Course {
 
     public void setExamTime(Time examTime) {
         ExamTime = examTime;
+    }
+
+    public int getTaken() {
+        return taken;
+    }
+
+    public void addStudent(Student student) {
+        this.taken ++;
+        this.students.add(student);
+    }
+    public void removeStudent(Student student) {
+        this.taken -= 1;
+        this.students.remove(student);
+    }
+
+    public ArrayList<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(ArrayList<Student> students) {
+        this.students = students;
     }
 }

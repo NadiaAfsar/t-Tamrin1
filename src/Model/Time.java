@@ -8,7 +8,7 @@ public class Time {
     private Time start;
     private Time end;
     private int minute;
-    private String[] dates;
+    private int[] dates;
 
     public Time(int hour, int minute) {
         this.hour = hour;
@@ -20,7 +20,7 @@ public class Time {
         this.start = start;
     }
     //class
-    public Time(String[] dates, Time start, Time end) {
+    public Time(int[] dates, Time start, Time end) {
         this.dates = dates;
         this.start = start;
         this.end = end;
@@ -66,11 +66,49 @@ public class Time {
         this.minute = minute;
     }
 
-    public String[] getDates() {
+    public int[] getDates() {
         return dates;
     }
 
-    public void setDates(String[] dates) {
+    public void setDates(int[] dates) {
         this.dates = dates;
+    }
+    @Override
+    public String toString () {
+        String time = "";
+        if (date != null) {
+            time += date + " ";
+            time += getStart().getHour()+":"+getStart().getMinute();
+        }
+        else {
+            for (int i = 0; i < dates.length; i++) {
+                if (dates[i] == 1) {
+                    time +="Saturday ";
+                }
+                else if (dates[i] == 2) {
+                    time +="Sunday ";
+                }
+                else if (dates[i] == 3) {
+                    time +="Monday ";
+                }
+                else if (dates[i] == 4) {
+                    time +="Tuesday ";
+                }
+                else if (dates[i] == 5) {
+                    time +="Wednesday ";
+                }
+                else if (dates[i] == 6) {
+                    time +="Thursday ";
+                }
+                else if (dates[i] == 7) {
+                    time +="Friday ";
+                }
+                if (i != dates.length - 1) {
+                    time +="& ";
+                }
+            }
+            time += getStart().getHour()+":"+getStart().getMinute()+" - "+getEnd().getHour()+":"+getEnd().getMinute();
+        }
+        return time;
     }
 }
