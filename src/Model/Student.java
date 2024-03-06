@@ -12,14 +12,14 @@ public class Student extends User{
     private boolean[][][] timetable;
     private ArrayList<Time> exams;
     private ArrayList<Course> takenCourses;
-    private Map<String, Course> addedCourses;
+    private Map<String, Course> mapOfCourses;
     public Student(String username, String password, String firstName, String lastName) {
         this.setUsername(username);
         this.setPassword(password);
         this.takenCourses = new ArrayList<>();
         this.timetable = new boolean[8][25][60];
         this.exams = new ArrayList<>();
-        this.addedCourses = new HashMap<>();
+        this.mapOfCourses = new HashMap<>();
         this.firstName = firstName;
         this.lastName = lastName;
     }
@@ -44,7 +44,7 @@ public class Student extends User{
         return exams;
     }
 
-    public Map<String, Course> getAddedCourses() {
-        return addedCourses;
+    public Map<String, Course> getMapOfCourses() {
+        return mapOfCourses;
     }
 }

@@ -1,16 +1,17 @@
 package Model.Faculty;
 
 import Model.Courses.Course;
-import Model.Courses.MathematicalSciences.Math1;
-import Model.Courses.Physics.Physic1;
-import Model.Courses.Physics.Physic1Lab;
+import Model.Courses.GeneralCourse;
+import Model.Courses.SpecializedCourse;
 import Model.Time;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Physics extends Faculty{
     public Physics() {
         this.setCourses(new ArrayList<>());
+        this.setMapOfCourses(new HashMap<>());
         this.addPhysic1();
         this.addPhysic1Lab();
         this.addElectromagnetism();
@@ -20,8 +21,9 @@ public class Physics extends Faculty{
         Time end = new Time(12, 0);
         Time t = new Time(new int[]{1, 3}, start, end);
         Time exam = new Time("1 Tir", new Time(9, 0));
-        Course course = new Physic1("Baghram", t, exam, 150);
+        Course course = new GeneralCourse("Physic 1","Baghram", t, exam,3,"21", 150);
         this.getCourses().add(course);
+        this.getMapOfCourses().put("21", course);
     }
 
     private void addPhysic1Lab() {
@@ -29,8 +31,9 @@ public class Physics extends Faculty{
         Time end = new Time(10, 0);
         Time t = new Time(new int[]{1}, start, end);
         Time exam = new Time("10 Khordad", new Time(9, 0));
-        Course course = new Physic1Lab("Moghimi", t, exam, 150);
+        Course course = new GeneralCourse("Physoc 1 Lab","Moghimi", t, exam,1,"22", 150);
         this.getCourses().add(course);
+        this.getMapOfCourses().put("22", course);
     }
 
     private void addElectromagnetism() {
@@ -38,7 +41,8 @@ public class Physics extends Faculty{
         Time end = new Time(15, 0);
         Time t = new Time(new int[]{2, 4}, start, end);
         Time exam = new Time("20 Khordad", new Time(9, 0));
-        Course course = new Physic1Lab("Mirkamali", t, exam, 150);
+        Course course = new SpecializedCourse("Electromagnetism","Mirkamali", t, exam,3,"23", 150);
         this.getCourses().add(course);
+        this.getMapOfCourses().put("23", course);
     }
 }

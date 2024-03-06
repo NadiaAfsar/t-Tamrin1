@@ -41,11 +41,15 @@ public class Cli {
         else if (pick.equals("2")) {
             SignUp();
         }
+        else {
+            System.out.println("Invalid request!");
+            init();
+        }
     }
     private void LogIn() {
-        System.out.println("0-Back\nEnter your username:");
+        System.out.println("*-Back\nEnter your username (Your username is your student ID if you are a student):");
         username = sc.next();
-        if (username.equals("0")) {
+        if (username.equals("*")) {
             init();
         }
         else if (users.get(username) != null) {
@@ -57,16 +61,23 @@ public class Cli {
         }
     }
     private void getPassword() {
-        System.out.println("0-Back\nEnter your password:");
+        System.out.println("*-Back\nEnter your password:");
         password = sc.next();
-        if (password.equals("0")) {
+        if (password.equals("*")) {
             LogIn();
         }
         else if (password.equals(users.get(username).getPassword())){
-            user = users.get(username);
-            studentCli = new StudentCli((Student)user, MathematicalSciences, Language, Physics, ElectricalEngineering);
-            studentCli.getCli().setUsers(this.getUsers());
-            studentCli.init();
+            if (username.equals("Admin")) {
+                adminCli = new AdminCli(MathematicalSciences, Language, Physics, ElectricalEngineering);
+                adminCli.getCli().setUsers(this.users);
+                adminCli.init();
+            }
+            else {
+                user = users.get(username);
+                studentCli = new StudentCli((Student) user, MathematicalSciences, Language, Physics, ElectricalEngineering);
+                studentCli.getCli().setUsers(this.getUsers());
+                studentCli.init();
+            }
         }
         else {
             System.out.println("Wrong password!");
@@ -74,12 +85,12 @@ public class Cli {
         }
     }
     private void SignUp() {
-        System.out.println("0-Back\nEnter your first name:");
+        System.out.println("*-Back\nEnter your first name:");
         firstName = sc.next();
-        if (firstName.equals("0")) {
+        if (firstName.equals("*")) {
             init();
         }
-        else if (isAlphabetic(firstName)){
+        else if (CliHelper.isAlphabetic(firstName)){
             getLastName();
         }
         else {
@@ -88,9 +99,9 @@ public class Cli {
         }
     }
     private void setPassword() {
-        System.out.println("0-Back\nEnter your password (Your password needs to be 9 characters):");
+        System.out.println("*-Back\nEnter your password (Your password needs to be 9 characters):");
         password = sc.next();
-        if (password.equals("0")) {
+        if (password.equals("*")) {
             SignUp();
         }
         else if (password.length() == 9) {
@@ -101,9 +112,9 @@ public class Cli {
         }
     }
     private void repeatPassword() {
-        System.out.println("0-Back\nEnter your password again:");
+        System.out.println("*-Back\nEnter your password again:");
         String pass = sc.next();
-        if (pass.equals("0")) {
+        if (pass.equals("*")) {
             setPassword();
         }
         else if (pass.equals(password)) {
@@ -119,9 +130,9 @@ public class Cli {
         }
     }
     private void setUsername () {
-        System.out.println("0-Back\nEnter your username:");
+        System.out.println("*-Back\nEnter your username (Student ID):");
         username = sc.next();
-        if (username.equals("0")) {
+        if (username.equals("*")) {
             getLastName();
         }
         else if (users.get(username) == null){
@@ -133,26 +144,18 @@ public class Cli {
         }
     }
     private void getLastName () {
-        System.out.println("0-Back\nEnter your last name:");
+        System.out.println("*-Back\nEnter your last name:");
         lastName = sc.next();
-        if (firstName.equals("0")) {
+        if (firstName.equals("*")) {
             SignUp();
         }
-        else if (isAlphabetic(lastName)) {
+        else if (CliHelper.isAlphabetic(lastName)) {
             setUsername();
         }
         else {
             System.out.println("Invalid last name!");
             getLastName();
         }
-    }
-    private boolean isAlphabetic (String string) {
-        for (int i = 0; i < string.length(); i++) {
-            if (!Character.isAlphabetic(string.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public Map<String, User> getUsers() {

@@ -3,7 +3,6 @@ package Site;
 import Model.Courses.Course;
 import Model.Faculty.*;
 import Model.Student;
-import Model.Time;
 
 import java.util.HashMap;
 import java.util.Scanner;
@@ -29,9 +28,9 @@ public class StudentCli {
     }
     public void init () {
         System.out.println("Welcome "+student.getFirstName()+" "+student.getLastName()+"!");
-        System.out.println("0-Back\n1-Show taken courses\n2-Show list of faculties");
+        System.out.println("*-Back\n1-Show taken courses\n2-Show list of faculties\n**-Sign out");
         pick = sc.next();
-        if (pick.equals("0")) {
+        if (pick.equals("*")) {
             cli.init();
         }
         else if (pick.equals("1")) {
@@ -40,11 +39,18 @@ public class StudentCli {
         else if (pick.equals("2")) {
             showFaculties();
         }
+        else if (pick.equals("**")) {
+            cli.init();
+        }
+        else {
+            System.out.println("Invalid request!");
+            this.init();
+        }
     }
     public void showFaculties () {
-        System.out.println("0-Back\n1-Mathematical Sciences\n2-Language\n3-Physics\n4-Electrical Engineering");
+        System.out.println("*-Back\n1-Mathematical Sciences\n2-Language\n3-Physics\n4-Electrical Engineering\n**-Sign out");
         pick = sc.next();
-        if (pick.equals("0")) {
+        if (pick.equals("*")) {
             init();
         }
         else if (pick.equals("1")) {
@@ -63,33 +69,42 @@ public class StudentCli {
             chosenFaculty = ElectricalEngineering;
             showCourses(ElectricalEngineering);
         }
+        else if (pick.equals("**")) {
+            cli.init();
+        }
+        else {
+            System.out.println("Invalid request!");
+            showFaculties();
+        }
     }
     public void showTakenCourses () {
-        System.out.println("0-Back");
+        System.out.println("*-Back\nEnter the code of a course for more info:");
         int numberOfCourses = student.getTakenCourses().size();
         for (int i = 1; i <= numberOfCourses; i++) {
             System.out.println(i+"-"+student.getTakenCourses().get(i-1).getTitle());
         }
-        int p = sc.nextInt();
-        if (p == 0) {
+        System.out.println("**-Sign out");
+        pick = sc.next();
+        int p = Integer.parseInt(pick);
+        if (pick.equals("*") ) {
             init();
         }
         else if (p >= 1 && p <= numberOfCourses) {
             showTakenCourse(student.getTakenCourses().get(p-1), 0);
         }
-
+        else if (pick.equals("**")) {
+            cli.init();
+        }
+        else {
+            System.out.println("Invalid request!");
+            showTakenCourses();
+        }
     }
     public void showTakenCourse (Course course, int lastPage) {
-        System.out.println("code: "+course.getCode());
-        System.out.println("credit: "+course.getCredit());
-        System.out.println("title: "+course.getTitle());
-        System.out.println("professor: "+course.getProfessor());
-        System.out.println("class time: "+course.getClassTime());
-        System.out.println("exam time: "+course.getExamTime());
-        System.out.println("taken capacity: "+course.getTaken()+"/"+course.getCapacity());
-        System.out.println("0-Back\n1-delete the course");
+        CliHelper.showCourseData(course);
+        System.out.println("*-Back\n1-delete the course\n**-Sign out");
         pick = sc.next();
-        if (pick.equals("0")) {
+        if (pick.equals("*")) {
             if (lastPage == 0) {
                 showTakenCourses();
             }
@@ -98,7 +113,7 @@ public class StudentCli {
             }
         }
         else if (pick.equals("1")) {
-            deleteCourse(course);
+            CliHelper.deleteCourseStudent(course, student);
             System.out.println("The course is deleted!");
             if (lastPage == 0) {
                 showTakenCourses();
@@ -107,44 +122,52 @@ public class StudentCli {
                 showCourses(chosenFaculty);
             }
         }
+        else if (pick.equals("**")) {
+            cli.init();
+        }
+        else {
+            System.out.println("Invalid request!");
+            showTakenCourse(course, lastPage);
+        }
     }
     private void showCourses (Faculty faculty) {
-        System.out.println("0-Back");
+        System.out.println("*-Back\nEnter the code of a course for more info:");
         int numberOfCourses = faculty.getCourses().size();
         for (int i = 1; i <= numberOfCourses; i++) {
-            System.out.println(i+"-"+faculty.getCourses().get(i-1).getTitle());
+            System.out.println(faculty.getCourses().get(i-1).getCode()+"-"+faculty.getCourses().get(i-1).getTitle());
         }
-        int p = sc.nextInt();
-        if (p == 0) {
+        System.out.println("**-Sign out");
+        pick = sc.next();
+        if (pick.equals("*")) {
             showFaculties();
         }
-        else if (p >= 1 && p <= numberOfCourses) {
-            if (student.getAddedCourses().get(faculty.getCourses().get(p-1).getTitle()) != null) {
-                showTakenCourse(faculty.getCourses().get(p-1), 1);
+        else if (faculty.getMapOfCourses().get(pick) != null) {
+            if (student.getMapOfCourses().get(faculty.getMapOfCourses().get(pick).getTitle()) != null) {
+                showTakenCourse(faculty.getMapOfCourses().get(pick), 1);
             }
             else {
-                showCourse(p);
+                showCourse(faculty.getMapOfCourses().get(pick));
             }
         }
+        else if (pick.equals("**")) {
+            cli.init();
+        }
+        else {
+            System.out.println("Invalid request!");
+            showCourses(faculty);
+        }
     }
-    public void showCourse (int n) {
-        Course course = chosenFaculty.getCourses().get(n-1);
-        System.out.println("code: "+course.getCode());
-        System.out.println("credit: "+course.getCredit());
-        System.out.println("title: "+course.getTitle());
-        System.out.println("professor: "+course.getProfessor());
-        System.out.println("class time: "+course.getClassTime());
-        System.out.println("exam time: "+course.getExamTime());
-        System.out.println("taken capacity: "+course.getTaken()+"/"+course.getCapacity());
-        System.out.println("0-Back\n1-add the course");
+    public void showCourse (Course course) {
+        CliHelper.showCourseData(course);
+        System.out.println("*-Back\n1-add the course\n**-Sign out");
         pick = sc.next();
-        if (pick.equals("0")) {
+        if (pick.equals("*")) {
             showCourses(chosenFaculty);
         }
         else if (pick.equals("1")) {
             if (course.getTaken() != course.getCapacity()) {
-                if (!hasConflict(course)) {
-                    addCourse(course);
+                if (!CliHelper.hasConflict(course, student)) {
+                    CliHelper.addCourseStudent(course, student);
                     System.out.println("Course added!");
                     showCourses(chosenFaculty);
                 }
@@ -158,77 +181,13 @@ public class StudentCli {
                 showCourses(chosenFaculty);
             }
         }
-    }
-    public void setClassTime (Time time, boolean addOrDel) {
-        for (int day: time.getDates()) {
-            for (int hour = time.getStart().getHour(); hour <= time.getEnd().getHour(); hour++) {
-                if (hour == time.getStart().getHour()) {
-                    for (int minute = time.getStart().getMinute(); minute < 60; minute++) {
-                        student.getTimetable()[day][hour][minute] = addOrDel;
-                    }
-                }
-                else if (hour == time.getEnd().getHour()) {
-                    for (int minute = 0; minute < time.getEnd().getMinute(); minute++) {
-                        student.getTimetable()[day][hour][minute] = addOrDel;
-                    }
-                }
-                else {
-                    for (int minute = 0; minute < 60; minute++) {
-                        student.getTimetable()[day][hour][minute] = addOrDel;
-                    }
-                }
-            }
+        else if (pick.equals("**")) {
+            cli.init();
         }
-    }
-    public boolean hasConflict(Course course) {
-        Time t = course.getExamTime();
-        for (Time exam: student.getExams()) {
-            if (t.getDate().equals(exam.getDate()) && t.getHour() == exam.getHour() && t.getMinute() == exam.getMinute()) {
-                return true;
-            }
+        else {
+            System.out.println("Invalid request!");
+            showCourse(course);
         }
-        t = course.getClassTime();
-        for (int day: t.getDates()) {
-            for (int hour = t.getStart().getHour(); hour <= t.getEnd().getHour(); hour++) {
-                if (hour == t.getStart().getHour()) {
-                    for (int minute = t.getStart().getMinute(); minute < 60; minute++) {
-                        if (student.getTimetable()[day][hour][minute] == true)
-                        {
-                            return true;
-                        }
-                    }
-                }
-                else if (hour == t.getEnd().getHour()) {
-                    for (int minute = 0; minute < t.getEnd().getMinute(); minute++) {
-                        if (student.getTimetable()[day][hour][minute] == true) {
-                            return true;
-                        }
-                    }
-                }
-                else {
-                    for (int minute = 0; minute < 60; minute++) {
-                        if (student.getTimetable()[day][hour][minute] == true) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    public void addCourse (Course course) {
-        course.addStudent(student);
-        setClassTime(course.getClassTime(), true);
-        student.getExams().add(course.getExamTime());
-        student.getTakenCourses().add(course);
-        student.getAddedCourses().put(course.getTitle(), course);
-    }
-    public void deleteCourse (Course course) {
-        setClassTime(course.getClassTime(), false);
-        student.getExams().remove(course.getExamTime());
-        student.getTakenCourses().remove(course);
-        student.getAddedCourses().remove(course.getTitle());
-        course.removeStudent(student);
     }
 
     public Student getStudent() {

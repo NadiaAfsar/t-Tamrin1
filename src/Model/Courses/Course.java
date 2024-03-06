@@ -4,17 +4,19 @@ import Model.Student;
 import Model.Time;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public abstract class Course {
     private String title;
-    private String professor;
+    private String instructor;
     private Time ClassTime;
     private Time ExamTime;
     private int credit;
-    private int code;
+    private String code;
     private int capacity;
     private int taken;
     private ArrayList<Student> students;
+    private Map<String, Student> mapOfStudents;
 
 
     public void setCapacity(int capacity) {
@@ -41,12 +43,12 @@ public abstract class Course {
         return capacity;
     }
 
-    public int getCode() {
+    public String getCode() {
         return code;
     }
 
-    public String getProfessor() {
-        return professor;
+    public String getInstructor() {
+        return instructor;
     }
 
     public void setTitle(String title) {
@@ -57,12 +59,12 @@ public abstract class Course {
         this.credit = credit;
     }
 
-    public void setCode(int code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
-    public void setProfessor(String professor) {
-        this.professor = professor;
+    public void setInstructor(String instructor) {
+        this.instructor = instructor;
     }
 
     public void setClassTime(Time classTime) {
@@ -92,5 +94,13 @@ public abstract class Course {
 
     public void setStudents(ArrayList<Student> students) {
         this.students = students;
+    }
+
+    public Map<String, Student> getMapOfStudents() {
+        return mapOfStudents;
+    }
+
+    public void setMapOfStudents(Map<String, Student> mapOfStudents) {
+        this.mapOfStudents = mapOfStudents;
     }
 }
