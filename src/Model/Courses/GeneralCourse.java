@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GeneralCourse extends Course{
-    public GeneralCourse(String title, String professor, Time classTime, Time examTime, int credit, String code, int capacity) {
+    public GeneralCourse(String title, String instructor, Time classTime, Time examTime, int credit, String code, int capacity) {
         this.setTitle(title);
-        this.setInstructor(professor);
+        this.setInstructor(instructor);
         this.setClassTime(classTime);
         this.setExamTime(examTime);
         this.setCredit(credit);

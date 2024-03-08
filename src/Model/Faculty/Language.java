@@ -20,7 +20,7 @@ public class Language extends Faculty{
         Time start = new Time(14,30);
         Time end = new Time(18, 0);
         Time t = new Time(new int[]{2, 4}, start, end);
-        Time exam = new Time("26 Khordad", new Time(11, 0));
+        Time exam = new Time("02/03/26", new Time(11, 0));
         Course course = new GeneralCourse("English","Jafari", t, exam,3, "31", 30);
         this.getCourses().add(course);
         this.getMapOfCourses().put("31", course);
@@ -29,7 +29,7 @@ public class Language extends Faculty{
         Time start = new Time(13,0);
         Time end = new Time(15, 0);
         Time t = new Time(new int[]{1, 3}, start, end);
-        Time exam = new Time("22 Khordad", new Time(9, 0));
+        Time exam = new Time("02/03/22", new Time(9, 0));
         Course course = new GeneralCourse("Persian","Gheidi", t, exam,3,"32", 30);
         this.getCourses().add(course);
         this.getMapOfCourses().put("32", course);
@@ -38,7 +38,7 @@ public class Language extends Faculty{
         Time start = new Time(9,0);
         Time end = new Time(10, 30);
         Time t = new Time(new int[]{1, 3}, start, end);
-        Time exam = new Time("2 Tir", new Time(10, 0));
+        Time exam = new Time("02/04/02", new Time(10, 0));
         Course course = new GeneralCourse("German","Haghighi", t, exam,3,"33", 30);
         this.getCourses().add(course);
         this.getMapOfCourses().put("33", course);

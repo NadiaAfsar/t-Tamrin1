@@ -7,6 +7,9 @@ import Model.Faculty.Faculty;
 import Model.Student;
 import Model.Time;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -37,15 +40,15 @@ public class AdminCli {
     private Time end;
     private Course course;
 
-    public AdminCli (Faculty f1, Faculty f2, Faculty f3, Faculty f4) {
+    public AdminCli (Faculty f1, Faculty f2, Faculty f3, Faculty f4) throws FileNotFoundException, IOException{
         this.MathematicalSciences = f1;
         this.Language = f2;
         this.Physics = f3;
         this.ElectricalEngineering = f4;
         sc = new Scanner(System.in);
-        cli = new Cli(f1, f2, f3, f4, new HashMap<>());
+        cli = new Cli(f1, f2, f3, f4);
     }
-    public void init () {
+    public void init () throws IOException {
         System.out.println("Welcome!");
         System.out.println("*-Back\n1-Show list of faculties\n**-Sign out");
         pick = sc.next();
@@ -63,7 +66,7 @@ public class AdminCli {
             this.init();
         }
     }
-    private void showFaculties () {
+    private void showFaculties () throws IOException{
         System.out.println("*-Back\n1-Mathematical Sciences\n2-Language\n3-Physics\n4-Electrical Engineering\n**-Sign out");
         pick = sc.next();
         if (pick.equals("*")) {
@@ -93,7 +96,7 @@ public class AdminCli {
             showFaculties();
         }
     }
-    private void showCourses (Faculty faculty) {
+    private void showCourses (Faculty faculty) throws IOException{
         System.out.println("*-Back\nEnter the code of a course for more info:");
         int numberOfCourses = faculty.getCourses().size();
         for (int i = 1; i <= numberOfCourses; i++) {
@@ -118,7 +121,7 @@ public class AdminCli {
             showCourses(faculty);
         }
     }
-    private void showCourse (Course course) {
+    private void showCourse (Course course) throws IOException{
         CliHelper.showCourseData(course);
         System.out.println("*-Back\n1-Show students\n2-Delete the course\n**-Sign out");
         pick = sc.next();
@@ -130,6 +133,10 @@ public class AdminCli {
         }
         else if (pick.equals("2")) {
             deleteCourse(course);
+            SaveLoad.saveCourses(chosenFaculty);
+            File file = new File("courses/"+course.getTitle());
+            file.delete();
+            System.out.println("The course is deleted!");
             showCourses(chosenFaculty);
         }
         else if (pick.equals("**")) {
@@ -140,48 +147,46 @@ public class AdminCli {
             showCourse(course);
         }
     }
-    private void deleteCourse(Course course) {
+    private void deleteCourse(Course course) throws IOException{
         chosenFaculty.getCourses().remove(course);
         chosenFaculty.getMapOfCourses().put(course.getCode(), null);
         for (int i = 0; i < course.getStudents().size(); i++) {
             CliHelper.deleteCourseStudent(course, course.getStudents().get(i));
         }
     }
-    private void showStudents (Course course) {
+    private void showStudents (Course course) throws IOException{
         ArrayList<Student> students = course.getStudents();
-        System.out.println("*-Back\nChoose a student to delete!");
-        for (int i = 1; i <= students.size(); i++) {
-            System.out.println(students.get(i-1).getUsername());
-        }
-        System.out.println("1-Add student\n**-Sign out");
-        pick = sc.next();
-        if (pick.equals("*")) {
-            showCourse(course);
-        }
-        else if (course.getMapOfStudents().get(pick) != null) {
-            showStudent(course.getMapOfStudents().get(pick), course);
-        }
-        else if (pick.equals("1")) {
-            addStudent(course);
-        }
-        else if (pick.equals("**")) {
-            cli.init();
-        }
-        else {
-            System.out.println("Invalid input!");
-            showStudents(course);
-        }
+            System.out.println("*-Back\nChoose a student to delete!");
+            for (int i = 1; i <= students.size(); i++) {
+                System.out.println(students.get(i - 1).getUsername());
+            }
+            System.out.println("1-Add student\n**-Sign out");
+            pick = sc.next();
+            if (pick.equals("*")) {
+                showCourse(course);
+            } else if (course.getMapOfStudents().get(pick) != null) {
+                showStudent(course.getMapOfStudents().get(pick), course);
+            } else if (pick.equals("1")) {
+                addStudent(course);
+            } else if (pick.equals("**")) {
+                cli.init();
+            } else {
+                System.out.println("Invalid input!");
+                showStudents(course);
+            }
     }
-    private void showStudent (Student student, Course course) {
+    private void showStudent (Student student, Course course) throws IOException{
         System.out.println("Student ID: "+student.getUsername());
         System.out.println("Name: "+student.getFirstName()+" "+student.getLastName());
         System.out.println("*-Back\n1-Delete the student\n**-Sign out");
-        pick = sc.next();
+        pick = sc.nextLine();
         if (pick.equals("*")) {
             showCourse(course);
         }
         else if (pick.equals("1")) {
             CliHelper.deleteCourseStudent(course, student);
+            SaveLoad.saveStudent(student);
+            SaveLoad.saveCourse(course);
             System.out.println("Student is deleted!");
             showCourse(course);
         }
@@ -193,7 +198,7 @@ public class AdminCli {
             showStudent(student, course);
         }
     }
-    private void addStudent(Course course) {
+    private void addStudent(Course course) throws IOException{
         System.out.println("*-Back\n**-Sign out\nEnter the student ID:");
         pick = sc.next();
         if (pick.equals("*")) {
@@ -202,22 +207,30 @@ public class AdminCli {
         else if (pick.equals("**")) {
             cli.init();
         }
-        else if (cli.getUsers().get(pick) != null) {
-            if (!CliHelper.hasConflict(course, (Student)cli.getUsers().get(pick))) {
-                CliHelper.addCourseStudent(course, (Student) cli.getUsers().get(pick));
-                System.out.println("Student is added.");
+        else if (cli.getMapOfUsers().get(pick) != null) {
+            if (cli.getMapOfUsers().get(pick) instanceof Student) {
+                Student student = (Student) cli.getMapOfUsers().get(pick);
+                if (!CliHelper.hasConflict(course, student)) {
+                    CliHelper.addCourseStudent(course, student);
+                    SaveLoad.saveStudent(student);
+                    SaveLoad.saveCourse(course);
+                    System.out.println("Student is added.");
+                } else {
+                    System.out.println("This course has time conflict with the student's classes!");
+                }
+                showStudents(course);
             }
             else {
-                System.out.println("This course has time conflict with the student's classes!");
+                System.out.println("Invalid request!");
+                showStudents(course);
             }
-            showStudents(course);
         }
         else {
             System.out.println("This student doesn't exist!");
             showStudents(course);
         }
     }
-    private void addCourse(Faculty faculty) {
+    private void addCourse(Faculty faculty) throws IOException{
         System.out.println("*-Back\nEnter type of the course:\n1-General Course\n2-Specialized Course\n**-Sign out");
         type = sc.next();
         if (type.equals("*")) {
@@ -234,7 +247,7 @@ public class AdminCli {
             getTitle(faculty);
         }
     }
-    private void getTitle (Faculty faculty) {
+    private void getTitle (Faculty faculty) throws IOException{
         System.out.println("*-Back\n**-Sign out\nEnter title of the course:");
         title = sc.next();
         if (title.equals("*")) {
@@ -246,7 +259,7 @@ public class AdminCli {
             getCode(faculty);
         }
     }
-    private void getCode (Faculty faculty) {
+    private void getCode (Faculty faculty) throws IOException{
         System.out.println("*-Back\n**-Sign out\nEnter the code of the course:");
         code = sc.next();
         if (code.equals("*")) {
@@ -263,7 +276,7 @@ public class AdminCli {
             getCredit(faculty);
         }
     }
-    public void getCredit(Faculty faculty) {
+    public void getCredit(Faculty faculty) throws IOException{
         System.out.println("*-Back\n**-Sign out\nEnter the credit of the course:");
         pick = sc.next();
         if (code.equals("*")) {
@@ -281,7 +294,7 @@ public class AdminCli {
             getCredit(faculty);
         }
     }
-    public void getInstructor (Faculty faculty) {
+    public void getInstructor (Faculty faculty) throws IOException{
         System.out.println("*-Back\n**-Sign out\nEnter the name of the instructor:");
         instructor = sc.next();
         if (instructor.equals("*")) {
@@ -294,7 +307,7 @@ public class AdminCli {
             getClassDay(faculty);
         }
     }
-    public void getClassDay (Faculty faculty) {
+    public void getClassDay (Faculty faculty) throws IOException{
         days = new ArrayList<>();
         System.out.println("*-Back\nChoose the days of the course(Enter 8 when you are done):");
         System.out.println("1-Saturday\n2-Sunday\n3-Monday\n4-Tuesday\n5-Wednesday\n6-Thursday\n7-Friday\n8-Done\n**-Sign out");
@@ -323,7 +336,7 @@ public class AdminCli {
             }
         }
     }
-    private void getStartTime (Faculty faculty) {
+    private void getStartTime (Faculty faculty) throws IOException{
         System.out.println("*-Back\n**-Sign out\nEnter the class start time:");
         getHour();
         if (pick.equals("*")) {
@@ -341,7 +354,7 @@ public class AdminCli {
             getStartTime(faculty);
         }
     }
-    private void getStartMinute (Faculty faculty) {
+    private void getStartMinute (Faculty faculty) throws IOException{
         getMinute();
         if (pick.equals("*")) {
             getClassDay(faculty);
@@ -368,7 +381,7 @@ public class AdminCli {
         pick = sc.next();
     }
 
-    private void getEndTime (Faculty faculty) {
+    private void getEndTime (Faculty faculty) throws IOException{
         System.out.println("*-Back\n**-Sign out\nEnter the class end time:");
         getHour();
         if (pick.equals("*")) {
@@ -386,7 +399,7 @@ public class AdminCli {
             getEndTime(faculty);
         }
     }
-    private void getEndMinute (Faculty faculty) {
+    private void getEndMinute (Faculty faculty) throws IOException{
         getMinute();
         if (pick.equals("*")) {
             getClassDay(faculty);
@@ -406,7 +419,7 @@ public class AdminCli {
             getEndMinute(faculty);
         }
     }
-    public void getExamTime(Faculty faculty) {
+    public void getExamTime(Faculty faculty) throws IOException{
         System.out.println("*-Back\n**-Sign out\nEnter the date of the exam(YY/MM//DD):");
         date = sc.next();
         if (date.equals("*")) {
@@ -419,7 +432,7 @@ public class AdminCli {
             getExamHour(faculty);
         }
     }
-    private void getExamHour(Faculty faculty) {
+    private void getExamHour(Faculty faculty) throws IOException{
         System.out.println("*-Back\n**-Sign out\nEnter the time of the exam:");
         getHour();
         if (pick.equals("*")) {
@@ -437,7 +450,7 @@ public class AdminCli {
             getExamHour(faculty);
         }
     }
-    private void getExamMinute (Faculty faculty) {
+    private void getExamMinute (Faculty faculty) throws IOException{
         getMinute();
         if (pick.equals("*")) {
             getExamHour(faculty);
@@ -456,7 +469,7 @@ public class AdminCli {
             getEndMinute(faculty);
         }
     }
-    private void getCapacity(Faculty faculty) {
+    private void getCapacity(Faculty faculty) throws IOException{
         System.out.println("*-Back\n**-Sign out\nEnter the capacity of the course:");
         pick = sc.next();
         if (pick.equals("*")) {
@@ -475,6 +488,9 @@ public class AdminCli {
             }
             faculty.getCourses().add(course);
             faculty.getMapOfCourses().put(course.getCode(), course);
+            SaveLoad.saveCourse(course);
+            SaveLoad.saveCourses(chosenFaculty);
+            System.out.println("The course is added!");
             showCourses(faculty);
         }
     }

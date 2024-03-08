@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 public class Physics extends Faculty{
     public Physics() {
+        this.setName("Physics");
         this.setCourses(new ArrayList<>());
         this.setMapOfCourses(new HashMap<>());
         this.addPhysic1();
@@ -20,7 +21,7 @@ public class Physics extends Faculty{
         Time start = new Time(10,0);
         Time end = new Time(12, 0);
         Time t = new Time(new int[]{1, 3}, start, end);
-        Time exam = new Time("1 Tir", new Time(9, 0));
+        Time exam = new Time("02/04/01", new Time(9, 0));
         Course course = new GeneralCourse("Physic 1","Baghram", t, exam,3,"21", 150);
         this.getCourses().add(course);
         this.getMapOfCourses().put("21", course);
@@ -30,7 +31,7 @@ public class Physics extends Faculty{
         Time start = new Time(8,0);
         Time end = new Time(10, 0);
         Time t = new Time(new int[]{1}, start, end);
-        Time exam = new Time("10 Khordad", new Time(9, 0));
+        Time exam = new Time("02/03/10", new Time(9, 0));
         Course course = new GeneralCourse("Physoc 1 Lab","Moghimi", t, exam,1,"22", 150);
         this.getCourses().add(course);
         this.getMapOfCourses().put("22", course);
@@ -40,7 +41,7 @@ public class Physics extends Faculty{
         Time start = new Time(13,0);
         Time end = new Time(15, 0);
         Time t = new Time(new int[]{2, 4}, start, end);
-        Time exam = new Time("20 Khordad", new Time(9, 0));
+        Time exam = new Time("02/03/20", new Time(9, 0));
         Course course = new SpecializedCourse("Electromagnetism","Mirkamali", t, exam,3,"23", 150);
         this.getCourses().add(course);
         this.getMapOfCourses().put("23", course);

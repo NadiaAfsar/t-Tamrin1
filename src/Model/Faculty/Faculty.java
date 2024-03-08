@@ -26,6 +26,10 @@ public abstract class Faculty {
         return mapOfCourses;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void setMapOfCourses(Map<String, Course> mapOfCourses) {
         this.mapOfCourses = mapOfCourses;
     }

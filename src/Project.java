@@ -2,26 +2,25 @@ import Model.Admin;
 import Model.Faculty.*;
 import Model.Student;
 import Model.User;
+import Site.AdminCli;
 import Site.Cli;
+import Site.SaveLoad;
+import Site.StudentCli;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Project {
-    private final Faculty MathematicalSciences;
-    private final Faculty Language;
-    private final Faculty Physics;
-    private final Faculty ElectricalEngineering;
     private Cli cli;
-    public Project () {
-        MathematicalSciences = new MathematicalSciences();
-        Language = new Language();
-        Physics = new Physics();
-        ElectricalEngineering = new ElectricalEngineering();
-        Map<String, User> users = new HashMap<>();
-        users.put("Admin", new Admin());
-        users.put("402100356", new Student("402100356", "402100356", "nadia", "afsar"));
-        cli = new Cli(MathematicalSciences, Language, Physics, ElectricalEngineering, users);
+    public Project () throws FileNotFoundException, IOException {
+        cli = new Cli(new MathematicalSciences(), new Language(), new Physics(), new ElectricalEngineering());
+        cli.setMapOfUsers(new HashMap<>());
+        cli.getMapOfUsers().put("Admin", new Admin());
+        cli.loadData();
         cli.init();
+
     }
 }
